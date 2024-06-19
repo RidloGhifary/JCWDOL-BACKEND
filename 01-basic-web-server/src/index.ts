@@ -99,6 +99,6 @@ const server = http.createServer(
   }
 );
 
-const port = process.env.port || 3222;
+const port = process.env.port || 3200;
 
 server.listen(port, () => console.log(`Server running on port: ${port}`));

@@ -63,13 +63,12 @@ const server = http.createServer((req, res) => {
             });
             if (user) {
                 const index = users.indexOf(user);
-                const existingUsers = users.slice(index, 1);
+                users.slice(index, 1);
                 res.writeHead(200, {
                     "Content-Type": "application/json",
                 });
                 res.end(JSON.stringify({
                     message: "User has been deleted",
-                    users: existingUsers,
                 }));
             }
             else {
@@ -81,5 +80,5 @@ const server = http.createServer((req, res) => {
         }
     }
 });
-const port = process.env.port || 3222;
+const port = process.env.port || 3200;
 server.listen(port, () => console.log(`Server running on port: ${port}`));

@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npm run build && node ./dist/index.js",
     "build": "tsc",
+    "dev": "concurrently \"tsc --watch\" \"nodemon dist/index.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,5 +16,8 @@
   "devDependencies": {
     "@types/node": "^20.14.5",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
   }
 }
