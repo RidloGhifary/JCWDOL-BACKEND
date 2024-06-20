@@ -11,13 +11,13 @@ import {
 
 const router = express.Router();
 
+router.get("/category/:category", getExpensesByCategory);
+router.get("/range", getExpensesByDateRange);
 router.route("/").get(getExpenses).post(createExpense);
 router
   .route("/:id")
   .get(getExpensesDetail)
   .patch(updateExpense)
   .delete(deleteExpense);
-router.get("/category/:category", getExpensesByCategory);
-router.get("/range", getExpensesByDateRange);
 
 export default router;

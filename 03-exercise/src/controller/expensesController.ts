@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import getExpensesFilePath from "../utils/getExpensesFilePath";
 import writeToExpensesFile from "../utils/writeToExpensesFile";
+import ErrorHandler from "../utils/ErrorHandler";
 
 export const getExpenses = async (req: Request, res: Response) => {
   try {
@@ -16,10 +17,10 @@ export const getExpensesByDateRange = async (req: Request, res: Response) => {
   const startDate = req.query.startDate as string;
   const endDate = req.query.endDate as string;
 
-  if (!startDate || !endDate)
-    return res.status(400).json({ message: "Invalid date range" });
-
   try {
+    if (!startDate || !endDate)
+      throw new ErrorHandler(400, "Invalid date range");
+
     const expenses = await getExpensesFilePath();
     const filteredExpenses = expenses.filter(
       (expense: { createdAt: Date }) =>
@@ -28,8 +29,10 @@ export const getExpensesByDateRange = async (req: Request, res: Response) => {
     );
 
     res.status(200).json({ message: "success", expenses: filteredExpenses });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+  } catch (err: unknown) {
+    if (err instanceof Error)
+      res.status(500).json({ message: err.message || "Internal server error" });
+    else res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -38,9 +41,10 @@ export const getExpensesByCategory = async (req: Request, res: Response) => {
     params: { category },
   } = req;
 
-  if (!category) return res.status(400).json({ message: "Invalid category" });
-
   try {
+    if (!["food", "transportation", "salary"].includes(category))
+      throw new ErrorHandler(400, "Invalid category");
+
     const expenses = await getExpensesFilePath();
 
     const filteredExpenses = expenses.filter(
@@ -49,11 +53,13 @@ export const getExpensesByCategory = async (req: Request, res: Response) => {
     );
 
     if (!filteredExpenses.length)
-      return res.status(404).json({ message: "Not found" });
+      throw new ErrorHandler(404, "Cannot found expenses");
 
     res.status(200).json({ message: "success", expenses: filteredExpenses });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+  } catch (err: unknown) {
+    if (err instanceof Error)
+      res.status(500).json({ message: err.message || "Internal server error" });
+    else res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -69,14 +75,16 @@ export const getExpensesDetail = async (req: Request, res: Response) => {
       (expense: { id: number }) => expense.id === Number(id)
     );
 
-    if (!expense) return res.status(404).json({ message: "Not found" });
+    if (!expense) throw new ErrorHandler(404, "Cannot found expense");
 
     res.status(200).json({
       message: "success",
       expense,
     });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+  } catch (err: unknown) {
+    if (err instanceof Error)
+      res.status(500).json({ message: err.message || "Internal server error" });
+    else res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -85,23 +93,22 @@ export const createExpense = async (req: Request, res: Response) => {
     body: { name, nominal, category, type },
   } = req;
 
-  if (!name || !nominal || !category || !type)
-    return res.status(400).json({ message: "All fields are required" });
-
-  if (!["income", "expense"].includes(type))
-    return res
-      .status(400)
-      .json({ message: "Type must be either income or expense" });
-
-  if (!["food", "transportation", "salary"].includes(category))
-    return res.status(400).json({
-      message: "Category must be either food, transportation, salary",
-    });
-
-  if (typeof nominal !== "number")
-    return res.status(400).json({ message: "Nominal must be a number" });
-
   try {
+    if (!name || !nominal || !category || !type)
+      throw new ErrorHandler(400, "All fields must be filled");
+
+    if (!["income", "expense"].includes(type))
+      throw new ErrorHandler(400, "Type must be either income or expense");
+
+    if (!["food", "transportation", "salary"].includes(category))
+      throw new ErrorHandler(
+        400,
+        "Category must be either food, transportation or salary"
+      );
+
+    if (typeof nominal !== "number")
+      throw new ErrorHandler(400, "Nominal must be a number");
+
     const expenses = await getExpensesFilePath();
 
     const newExpenses = {
@@ -118,8 +125,10 @@ export const createExpense = async (req: Request, res: Response) => {
     await writeToExpensesFile(expenses);
 
     res.status(201).json({ message: "success", newExpenses, expenses });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+  } catch (err: unknown) {
+    if (err instanceof Error)
+      res.status(500).json({ message: err.message || "Internal server error" });
+    else res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -129,37 +138,42 @@ export const updateExpense = async (req: Request, res: Response) => {
     body: { name, nominal, category, type },
   } = req;
 
-  if (nominal && typeof nominal !== "number")
-    return res.status(400).json({ message: "Nominal must be a number" });
-
-  if (type !== "expense" || type !== "income")
-    return res.status(400).json({ message: "Type must be expense or income" });
-
   try {
+    if (nominal && typeof nominal !== "number")
+      throw new ErrorHandler(400, "Nominal must be a number");
+
+    if (type && !["income", "expense"].includes(type))
+      throw new ErrorHandler(400, "Type must be either income or expense");
+
     const expenses = await getExpensesFilePath();
 
-    let expense = expenses.find(
+    const expenseIndex = expenses.findIndex(
       (expense: { id: number }) => expense.id === Number(id)
     );
-    if (!expense) return res.status(404).json({ message: "Not found" });
 
-    expense = {
-      ...expense,
-      name: name || expense.name,
-      nominal: nominal || expense.nominal,
-      type: type || expense.type,
-      category: category || expense.category,
+    if (expenseIndex === -1)
+      throw new ErrorHandler(404, "Cannot found expense");
+
+    expenses[expenseIndex] = {
+      ...expenses[expenseIndex],
+      name: name || expenses[expenseIndex].name,
+      nominal: nominal || expenses[expenseIndex].nominal,
+      category: category || expenses[expenseIndex].category,
+      type: type || expenses[expenseIndex].type,
       updatedAt: new Date(),
     };
 
-    expenses.push(expense);
     await writeToExpensesFile(expenses);
 
-    res
-      .status(200)
-      .json({ message: "success", UpdatedExpense: expense, expenses });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(200).json({
+      message: "success",
+      updateExpense: expenses[expenseIndex],
+      expenses,
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error)
+      res.status(500).json({ message: err.message || "Internal server error" });
+    else res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -176,13 +190,15 @@ export const deleteExpense = async (req: Request, res: Response) => {
     );
 
     if (expenseIndex === -1)
-      return res.status(404).json({ message: "Not found" });
+      throw new ErrorHandler(404, "Cannot found expense");
 
     expenses.splice(expenseIndex, 1);
 
     await writeToExpensesFile(expenses);
     res.status(200).json({ message: "success", expenses });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+  } catch (err: unknown) {
+    if (err instanceof Error)
+      res.status(500).json({ message: err.message || "Internal server error" });
+    else res.status(500).json({ message: "Internal server error" });
   }
 };

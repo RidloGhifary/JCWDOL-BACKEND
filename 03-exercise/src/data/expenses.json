@@ -73,11 +73,11 @@
   },
   {
     "id": 9,
-    "name": "Another test",
+    "name": "Another test 2",
     "nominal": 12000,
     "category": "food",
     "type": "expense",
     "createdAt": "2024-06-20T13:27:46.552Z",
-    "updatedAt": "2024-06-20T13:27:46.552Z"
+    "updatedAt": "2024-06-20T14:43:27.301Z"
   }
 ]
