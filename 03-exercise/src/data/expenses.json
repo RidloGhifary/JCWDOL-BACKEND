@@ -1,1 +1,83 @@
-[{"id":1,"name":"Juice","nominal":10000,"category":"Food","createdAt":"2024-03-08T16:30:00","updatedAt":"2024-03-08T16:30:00"},{"id":2,"name":"Coffee","nominal":7000,"category":"Food","createdAt":"2024-07-15T09:20:30","updatedAt":"2024-07-15T09:20:30"},{"id":3,"name":"Book","nominal":20000,"category":"Book","createdAt":"2024-02-12T10:45:00","updatedAt":"2024-02-12T10:45:00"},{"id":4,"name":"Shoes","nominal":150000,"category":"Fashion","createdAt":"2024-09-05T18:15:00","updatedAt":"2024-09-05T18:15:00"},{"id":5,"name":"Shirt","nominal":100000,"category":"Fashion","createdAt":"2024-05-18T12:30:00","updatedAt":"2024-05-18T12:30:00"},{"id":6,"name":"Food for a week","nominal":150000,"category":"Food","createdAt":"2024-10-21T09:45:00","updatedAt":"2024-10-21T09:45:00"},{"id":7,"name":"Laptop","nominal":7000000,"category":"Electronic","createdAt":"2024-01-15T10:30:00","updatedAt":"2024-01-15T10:30:00"},{"id":8,"name":"Transportation","nominal":1000000,"category":"Transportation","createdAt":"2024-04-28T15:30:00","updatedAt":"2024-04-28T15:30:00"},{"id":9,"name":"Food for a month","nominal":4500000,"category":"Food","createdAt":"2024-08-21T21:45:00","updatedAt":"2024-08-21T21:45:00"},{"id":10,"name":"Bike","nominal":5000000,"category":"Fashion","createdAt":"2024-01-12T10:15:00","updatedAt":"2024-01-12T10:15:00"},{"id":11,"name":"Testing","nominal":20000,"category":"Test","createdAt":"2024-06-27T13:45:00","updatedAt":"2024-06-27T13:45:00"},{"id":12,"name":"Another test","nominal":100000,"category":"Test","createdAt":"2024-06-20T03:31:16.589Z","updatedAt":"2024-06-20T03:31:16.589Z"},{"id":12,"name":"Another test updated","nominal":100000,"category":"Test","createdAt":"2024-06-20T03:31:16.589Z","updatedAt":1718854380833},{"id":12,"name":"Another test","nominal":100000,"category":"Test","createdAt":"2024-06-20T03:31:16.589Z","updatedAt":"2024-06-20T03:33:34.406Z"}]
+[
+  {
+    "id": 1,
+    "name": "Juice",
+    "nominal": 10000,
+    "category": "food",
+    "type": "expense",
+    "createdAt": "2024-03-08T16:30:00",
+    "updatedAt": "2024-03-08T16:30:00"
+  },
+  {
+    "id": 2,
+    "name": "Coffee",
+    "nominal": 7000,
+    "category": "food",
+    "type": "expense",
+    "createdAt": "2024-07-15T09:20:30",
+    "updatedAt": "2024-07-15T09:20:30"
+  },
+  {
+    "id": 3,
+    "name": "Book",
+    "nominal": 20000,
+    "category": "food",
+    "type": "expense",
+    "createdAt": "2024-02-12T10:45:00",
+    "updatedAt": "2024-02-12T10:45:00"
+  },
+  {
+    "id": 4,
+    "name": "Gojek",
+    "nominal": 150000,
+    "category": "transportation",
+    "type": "expense",
+    "createdAt": "2024-09-05T18:15:00",
+    "updatedAt": "2024-09-05T18:15:00"
+  },
+  {
+    "id": 5,
+    "name": "Shirt",
+    "nominal": 100000,
+    "category": "food",
+    "type": "expense",
+    "createdAt": "2024-05-18T12:30:00",
+    "updatedAt": "2024-05-18T12:30:00"
+  },
+  {
+    "id": 6,
+    "name": "Food for a week",
+    "nominal": 150000,
+    "category": "food",
+    "type": "expense",
+    "createdAt": "2024-10-21T09:45:00",
+    "updatedAt": "2024-10-21T09:45:00"
+  },
+  {
+    "id": 7,
+    "name": "Work",
+    "nominal": 7000000,
+    "category": "salary",
+    "type": "income",
+    "createdAt": "2024-01-15T10:30:00",
+    "updatedAt": "2024-01-15T10:30:00"
+  },
+  {
+    "id": 8,
+    "name": "Freelance",
+    "nominal": 10000000,
+    "category": "salary",
+    "type": "income",
+    "createdAt": "2024-04-01T14:15:00",
+    "updatedAt": "2024-04-01T14:15:00"
+  },
+  {
+    "id": 9,
+    "name": "Another test",
+    "nominal": 12000,
+    "category": "food",
+    "type": "expense",
+    "createdAt": "2024-06-20T13:27:46.552Z",
+    "updatedAt": "2024-06-20T13:27:46.552Z"
+  }
+]

@@ -22,9 +22,9 @@ export const getExpensesByDateRange = async (req: Request, res: Response) => {
   try {
     const expenses = await getExpensesFilePath();
     const filteredExpenses = expenses.filter(
-      (expense: { date: Date }) =>
-        new Date(expense.date) >= new Date(startDate) &&
-        new Date(expense.date) <= new Date(endDate)
+      (expense: { createdAt: Date }) =>
+        new Date(expense.createdAt) >= new Date(startDate) &&
+        new Date(expense.createdAt) <= new Date(endDate)
     );
 
     res.status(200).json({ message: "success", expenses: filteredExpenses });
@@ -82,11 +82,21 @@ export const getExpensesDetail = async (req: Request, res: Response) => {
 
 export const createExpense = async (req: Request, res: Response) => {
   const {
-    body: { name, nominal, category },
+    body: { name, nominal, category, type },
   } = req;
 
-  if (!name || !nominal || !category)
+  if (!name || !nominal || !category || !type)
     return res.status(400).json({ message: "All fields are required" });
+
+  if (!["income", "expense"].includes(type))
+    return res
+      .status(400)
+      .json({ message: "Type must be either income or expense" });
+
+  if (!["food", "transportation", "salary"].includes(category))
+    return res.status(400).json({
+      message: "Category must be either food, transportation, salary",
+    });
 
   if (typeof nominal !== "number")
     return res.status(400).json({ message: "Nominal must be a number" });
@@ -99,6 +109,7 @@ export const createExpense = async (req: Request, res: Response) => {
       name,
       nominal,
       category,
+      type,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -115,11 +126,14 @@ export const createExpense = async (req: Request, res: Response) => {
 export const updateExpense = async (req: Request, res: Response) => {
   const {
     params: { id },
-    body: { name, nominal, category },
+    body: { name, nominal, category, type },
   } = req;
 
   if (nominal && typeof nominal !== "number")
     return res.status(400).json({ message: "Nominal must be a number" });
+
+  if (type !== "expense" || type !== "income")
+    return res.status(400).json({ message: "Type must be expense or income" });
 
   try {
     const expenses = await getExpensesFilePath();
@@ -133,6 +147,7 @@ export const updateExpense = async (req: Request, res: Response) => {
       ...expense,
       name: name || expense.name,
       nominal: nominal || expense.nominal,
+      type: type || expense.type,
       category: category || expense.category,
       updatedAt: new Date(),
     };
@@ -156,12 +171,17 @@ export const deleteExpense = async (req: Request, res: Response) => {
   try {
     const expenses = await getExpensesFilePath();
 
-    const newExpenses = expenses.filter((expense: { id: number }) => {
-      return expense.id !== Number(id);
-    });
+    const expenseIndex = expenses.findIndex(
+      (expense: { id: number }) => expense.id === Number(id)
+    );
 
-    await writeToExpensesFile(newExpenses);
-    res.status(200).json({ message: "success", expenses: newExpenses });
+    if (expenseIndex === -1)
+      return res.status(404).json({ message: "Not found" });
+
+    expenses.splice(expenseIndex, 1);
+
+    await writeToExpensesFile(expenses);
+    res.status(200).json({ message: "success", expenses });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
   }

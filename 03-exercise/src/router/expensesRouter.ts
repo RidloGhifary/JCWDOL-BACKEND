@@ -11,12 +11,13 @@ import {
 
 const router = express.Router();
 
-router.get("/", getExpenses);
+router.route("/").get(getExpenses).post(createExpense);
+router
+  .route("/:id")
+  .get(getExpensesDetail)
+  .patch(updateExpense)
+  .delete(deleteExpense);
 router.get("/category/:category", getExpensesByCategory);
 router.get("/range", getExpensesByDateRange);
-router.get("/:id", getExpensesDetail);
-router.post("/", createExpense);
-router.patch("/:id", updateExpense);
-router.delete("/:id", deleteExpense);
 
 export default router;
