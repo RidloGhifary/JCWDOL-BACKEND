@@ -3,9 +3,13 @@ import getExpensesFilePath from "../utils/getExpensesFilePath";
 import writeToExpensesFile from "../utils/writeToExpensesFile";
 
 export const getExpenses = async (req: Request, res: Response) => {
-  const expenses = await getExpensesFilePath();
+  try {
+    const expenses = await getExpensesFilePath();
 
-  res.status(200).json({ message: "success get all expenses", expenses });
+    res.status(200).json({ message: "success get all expenses", expenses });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const getExpensesDetail = async (req: Request, res: Response) => {
