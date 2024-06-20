@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import getExpensesFilePath from "../utils/getExpensesFilePath";
 import writeToExpensesFile from "../utils/writeToExpensesFile";
-import convertRupiah from "../utils/convertRupiah";
 
 export const getExpenses = async (req: Request, res: Response) => {
   try {
