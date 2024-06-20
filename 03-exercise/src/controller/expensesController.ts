@@ -1,12 +1,58 @@
 import { Request, Response } from "express";
 import getExpensesFilePath from "../utils/getExpensesFilePath";
 import writeToExpensesFile from "../utils/writeToExpensesFile";
+import convertRupiah from "../utils/convertRupiah";
 
 export const getExpenses = async (req: Request, res: Response) => {
   try {
     const expenses = await getExpensesFilePath();
 
     res.status(200).json({ message: "success get all expenses", expenses });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getExpensesByDateRange = async (req: Request, res: Response) => {
+  const startDate = req.query.startDate as string;
+  const endDate = req.query.endDate as string;
+
+  if (!startDate || !endDate)
+    return res.status(400).json({ message: "Invalid date range" });
+
+  try {
+    const expenses = await getExpensesFilePath();
+    const filteredExpenses = expenses.filter(
+      (expense: { date: Date }) =>
+        new Date(expense.date) >= new Date(startDate) &&
+        new Date(expense.date) <= new Date(endDate)
+    );
+
+    res.status(200).json({ message: "success", expenses: filteredExpenses });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getExpensesByCategory = async (req: Request, res: Response) => {
+  const {
+    params: { category },
+  } = req;
+
+  if (!category) return res.status(400).json({ message: "Invalid category" });
+
+  try {
+    const expenses = await getExpensesFilePath();
+
+    const filteredExpenses = expenses.filter(
+      (expense: { category: string }) =>
+        expense.category.toLowerCase() === category.toLowerCase()
+    );
+
+    if (!filteredExpenses.length)
+      return res.status(404).json({ message: "Not found" });
+
+    res.status(200).json({ message: "success", expenses: filteredExpenses });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -26,7 +72,10 @@ export const getExpensesDetail = async (req: Request, res: Response) => {
 
     if (!expense) return res.status(404).json({ message: "Not found" });
 
-    res.status(200).json({ message: "success", expense });
+    res.status(200).json({
+      message: "success",
+      expense,
+    });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -51,12 +100,13 @@ export const createExpense = async (req: Request, res: Response) => {
       name,
       nominal,
       category,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     expenses.push(newExpenses);
     await writeToExpensesFile(expenses);
 
-    console.log("🚀 ~ createExpense ~ expenses:", expenses);
     res.status(201).json({ message: "success", newExpenses, expenses });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
@@ -69,7 +119,7 @@ export const updateExpense = async (req: Request, res: Response) => {
     body: { name, nominal, category },
   } = req;
 
-  if (typeof nominal !== "number")
+  if (nominal && typeof nominal !== "number")
     return res.status(400).json({ message: "Nominal must be a number" });
 
   try {
@@ -85,6 +135,7 @@ export const updateExpense = async (req: Request, res: Response) => {
       name: name || expense.name,
       nominal: nominal || expense.nominal,
       category: category || expense.category,
+      updatedAt: new Date(),
     };
 
     expenses.push(expense);

@@ -1,6 +1,8 @@
 import express from "express";
 import {
   getExpenses,
+  getExpensesByCategory,
+  getExpensesByDateRange,
   getExpensesDetail,
   createExpense,
   updateExpense,
@@ -10,6 +12,8 @@ import {
 const router = express.Router();
 
 router.get("/", getExpenses);
+router.get("/category/:category", getExpensesByCategory);
+router.get("/range", getExpensesByDateRange);
 router.get("/:id", getExpensesDetail);
 router.post("/", createExpense);
 router.patch("/:id", updateExpense);
