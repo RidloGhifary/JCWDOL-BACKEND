@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import getExpensesFilePath from "../utils/getExpensesFilePath";
 import writeToExpensesFile from "../utils/writeToExpensesFile";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/customError";
 
 export const getExpenses = async (req: Request, res: Response) => {
   try {
