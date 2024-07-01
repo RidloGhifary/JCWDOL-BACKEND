@@ -91,3 +91,26 @@ export async function deleteBranch(req: Request, res: Response) {
       .json({ message: "Internal server error" });
   }
 }
+
+export async function getBranchStatus(req: Request, res: Response) {
+  try {
+    const status = await prisma.branch.aggregate({
+      _count: {
+        _all: true,
+      },
+      _max: {
+        createdAt: true,
+      },
+      _min: {
+        createdAt: true,
+      },
+    });
+
+    res.status(200).json({ ok: true, status });
+  } catch (err: any) {
+    console.error(err);
+    res
+      .status(err.statusCode || 500)
+      .json({ message: "Internal server error" });
+  }
+}
