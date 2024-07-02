@@ -4,6 +4,7 @@ import {
   getPosts,
   getSinglePost,
   updatePost,
+  deletePost,
 } from "../controller/post-controller";
 import { AuthenticatedToken } from "../middleware/auth-middleware";
 
@@ -15,6 +16,7 @@ router
   .route("/posts/:id")
   .all(AuthenticatedToken)
   .get(getSinglePost)
-  .patch(updatePost);
+  .patch(updatePost)
+  .delete(deletePost);
 
 export default router;
