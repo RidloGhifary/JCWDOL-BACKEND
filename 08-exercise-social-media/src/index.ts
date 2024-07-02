@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import ErrorHandler from "./middleware/error-middleware";
 import PostRouter from "./router/post-router";
 import UserRouter from "./router/user-router";
+import LikeRouter from "./router/like-post-router";
 
 dotenv.config();
 
@@ -16,8 +17,9 @@ app.use(helmet());
 
 app.use(ErrorHandler);
 
-app.use("/api/v1", PostRouter);
 app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/posts", PostRouter);
+app.use("/api/v1/posts/like", LikeRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

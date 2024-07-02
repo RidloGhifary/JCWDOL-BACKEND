@@ -10,10 +10,10 @@ import { AuthenticatedToken } from "../middleware/auth-middleware";
 
 const router = Router();
 
-router.route("/posts").get(getPosts);
-router.route("/posts").all(AuthenticatedToken).post(createPost);
+router.route("/").get(getPosts);
+router.route("/").all(AuthenticatedToken).post(createPost);
 router
-  .route("/posts/:id")
+  .route("/:id")
   .all(AuthenticatedToken)
   .get(getSinglePost)
   .patch(updatePost)
