@@ -1,9 +1,12 @@
 import express, { Application } from "express";
 import helmet from "helmet";
+import dotenv from "dotenv";
 
 import ErrorHandler from "./middleware/error-middleware";
 import PostRouter from "./router/post-router";
 import UserRouter from "./router/user-router";
+
+dotenv.config();
 
 const app: Application = express();
 const port: number = Number(process.env.PORT) || 3000;

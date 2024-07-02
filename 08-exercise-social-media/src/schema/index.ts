@@ -9,6 +9,11 @@ export const RegisterSchema = z.object({
   password: z.string().min(6, "Password with 6 character is required"),
 });
 
+export const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
+
 export const PostSchema = z.object({
   content: z.string().min(1, "Content is required"),
   image: z.string().optional(),
