@@ -16,7 +16,7 @@ export async function createPost(
   await db.post.create({
     data: {
       ...validateRequest.data,
-      userId: 1,
+      userId: res.locals.user.user.id,
     },
   });
 
