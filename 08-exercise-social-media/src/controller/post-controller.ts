@@ -8,9 +8,33 @@ export async function getPosts(
   next: NextFunction
 ) {
   try {
-    const posts = await db.post.findMany();
+    const posts = await db.post.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        _count: {
+          select: {
+            like: true,
+            comment: true,
+          },
+        },
+      },
+    });
 
-    res.status(200).json({ ok: true, data: posts });
+    // Map the results to include "likeAmount" instead of "_count.like"
+    const formattedPosts = posts.map((post) => ({
+      ...post,
+      likeAmount: post._count.like,
+      commentAmount: post._count.comment,
+      _count: undefined, // Remove the original _count property if necessary
+    }));
+
+    res.status(200).json({ ok: true, posts: formattedPosts });
   } catch (err) {
     next(err);
   }
@@ -26,6 +50,35 @@ export async function getSinglePost(
     const post = await db.post.findUnique({
       where: {
         id: parseInt(id),
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        comment: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+        like: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
