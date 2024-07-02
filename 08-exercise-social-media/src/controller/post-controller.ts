@@ -60,3 +60,48 @@ export async function createPost(
     next(error);
   }
 }
+
+export async function updatePost(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const {
+    params: { id },
+    body: { content, image },
+  } = req;
+
+  const validateRequest = PostSchema.safeParse(req.body);
+
+  if (!validateRequest.success) {
+    return res.status(400).json({ ok: false, message: "Invalid request" });
+  }
+
+  try {
+    const post = await db.post.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!post) {
+      return res.status(404).json({ ok: false, message: "Post not found" });
+    }
+
+    if (post?.userId !== res.locals.user.user.id) {
+      return res
+        .status(403)
+        .json({ ok: false, message: "Unauthorized to update this post" });
+    }
+
+    const updatedPost = await db.post.update({
+      where: { id: parseInt(id) },
+      data: {
+        content,
+        image,
+      },
+    });
+
+    res.status(200).json({ ok: true, post: updatedPost });
+  } catch (err) {
+    next(err);
+  }
+}
