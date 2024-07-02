@@ -18,3 +18,7 @@ export const PostSchema = z.object({
   content: z.string().min(1, "Content is required"),
   image: z.string().optional(),
 });
+
+export const CommentSchema = z.object({
+  content: z.string().min(1, "Content is required"),
+});
