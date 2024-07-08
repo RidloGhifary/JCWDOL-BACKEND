@@ -26,6 +26,7 @@ export default class SampleRouter {
       uploader("IMG", "/images").single("file"),
       this.sampleRouter.addNewImage
     );
+    this.router.post("/sample/send-email", this.sampleRouter.sendEmail);
   }
 
   getRouter(): Router {
