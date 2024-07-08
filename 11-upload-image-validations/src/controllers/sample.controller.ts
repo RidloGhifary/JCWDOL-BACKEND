@@ -37,4 +37,20 @@ export default class SampleController {
       next(err);
     }
   }
+
+  async addNewImage(req: Request, res: Response, next: NextFunction) {
+    try {
+      const file = req.file;
+
+      if (!file) throw new Error("No file found");
+
+      return res.status(200).json({
+        ok: true,
+        message: "File uploaded successfully",
+        data: file.filename,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
