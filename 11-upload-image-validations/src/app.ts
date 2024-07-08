@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import cors from "cors";
 
 import SampleRouter from "./routes/sample.route";
@@ -11,13 +11,23 @@ export default class App {
   constructor() {
     this.app = express();
     this.configure();
+    this.routes();
+    this.handleError();
   }
 
   private configure(): void {
     this.app.use(express.json());
     this.app.use(cors());
     this.app.use(express.urlencoded({ extended: true }));
-    this.routes();
+  }
+
+  private handleError(): void {
+    this.app.use(
+      (err: Error, req: Request, res: Response, next: NextFunction) => {
+        console.error("Error ->", err.stack);
+        res.status(500).send(err.message);
+      }
+    );
   }
 
   private routes(): void {
