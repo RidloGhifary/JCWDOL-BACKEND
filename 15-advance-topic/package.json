@@ -1,0 +1,28 @@
+{
+  "name": "15-advance-topic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^5.16.2",
+    "axios": "^1.7.2",
+    "express": "^4.19.2",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/supertest": "^6.0.2",
+    "jest-mock-extended": "^3.0.7",
+    "nock": "^13.5.4",
+    "prisma": "^5.16.2"
+  }
+}
